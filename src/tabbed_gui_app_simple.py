@@ -24,11 +24,10 @@ PROTANOPIA = 5
 DEUTERANOPIA = 6
 TRITANOPIA = 7
 
-class SimulationGui():
+
+class SimulationGui:
 
     def ss(self):
-
-        print('ss', self.selected_type, self.selected_level)
         self.selected = self.var.get()
 
         self.selected_type = int(self.var1.get())
@@ -41,9 +40,6 @@ class SimulationGui():
             self.rb_medium.configure(state=DISABLED)
             self.rb_strong.configure(state=DISABLED)
         else:
-            print('type', self.selected_type)
-            print('level', self.selected_level)
-
             if self.selected_type == ACHROMATOPSIA:
                 sim_image = cv2.cvtColor(self.loaded_image, cv2.COLOR_RGB2GRAY)
                 self.rb_light.configure(state = DISABLED)
@@ -111,8 +107,6 @@ class SimulationGui():
         self.tabControl = None
         self.simul_image = None
 
-        print('>>', self.selected_type, self.selected_level)
-
     def init_ui(self):
         self.simul_image = None
         self.selected_type = 0
@@ -122,7 +116,6 @@ class SimulationGui():
 
         # create all of the main containers
         top_frame = Frame(self.root, bg='white', width=window_width, height=50, pady=3)
-
 
         # layout all of the main containers
         self.root.grid_rowconfigure(1, weight=1)
@@ -151,9 +144,8 @@ class SimulationGui():
         open_button = Button(top_frame, text='Change Image', command=self.select_file)
         open_button.grid(row=0, column=4, padx=10, pady=3)
 
-        save_button = Button(top_frame, text='Save Image', command=self.select_file)
+        save_button = Button(top_frame, text='Save Image', command=self.save_file)
         save_button.grid(row=1, column=4, padx=10, pady=3)
-
 
         rb_normal = Radiobutton(top_frame, text='Normal View', variable = self.var1, value=NORMAL_VIEW, command=self.ss, bg='white')
         rb_normal.grid(row=1, column=0, padx=3, pady=3)
@@ -238,10 +230,9 @@ class SimulationGui():
         )
 
         filename = fd.askopenfilename(
-            title='Escolha uma imagem',
-            initialdir='/',
+            title='Choose an image',
+            initialdir='../imgs',
             filetypes=filetypes)
-        print(filename)
 
         self.label_original.after(10, self.label_original.destroy())
         self.loaded_image = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
@@ -263,15 +254,24 @@ class SimulationGui():
         original_pil = ImageTk.PhotoImage(original)
         self.label_original = Label(self.tab_original, image=original_pil)
         self.label_original.image = original_pil
-        #self.label_original.grid(row=0, column=0, padx=10, pady=3)
         self.label_original.pack(side=TOP, expand=YES, fill=BOTH)
         self.ss()
 
     def save_file(self):
-        cv2.imwrite('../imgs/semA.jpg', self.simul_image[..., ::-1].copy())
+        filetypes = (
+            ('Image files', '*.jpg *.png'),
+            ('All files', '*.*')
+        )
+        filename = fd.asksaveasfile(
+            title='Choose an image',
+            initialdir='../imgs',
+            filetypes=filetypes)
+        if filename is not None:
+            pil = Image.fromarray(self.simul_image)
+            pil.save(filename.name)
+
 
 def main():
-
     SimulationGui()
 
 

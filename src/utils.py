@@ -41,6 +41,7 @@ def sRGB_from_linearRGB(v):
 
     return 255 * (pow(v, 1.0 / 2.4) * 1.055 - 0.055)
 
+
 def clip_array(arr):
     comp_arr = np.ones_like(arr)
     arr = np.maximum(comp_arr * 0, arr)
